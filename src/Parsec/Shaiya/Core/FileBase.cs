@@ -90,7 +90,12 @@ public abstract class FileBase : IJsonWritable<FileBase>
     /// <returns>T instance</returns>
     internal static T ReadFromFile<T>(string path, BinarySerializationOptions serializationOptions) where T : FileBase, new()
     {
-        var instance = new T { Path = path, Episode = serializationOptions.Episode, Encoding = serializationOptions.Encoding };
+        var instance = new T
+        {
+            Path = path,
+            Episode = serializationOptions.Episode,
+            Encoding = serializationOptions.Encoding
+        };
         using var binaryReader = new SBinaryReader(path, serializationOptions);
 
         if (instance is IEncryptable encryptableInstance)
@@ -140,7 +145,12 @@ public abstract class FileBase : IJsonWritable<FileBase>
     /// <returns>T instance</returns>
     internal static T ReadFromBuffer<T>(string name, byte[] buffer, BinarySerializationOptions serializationOptions) where T : FileBase, new()
     {
-        var instance = new T { Path = name, Episode = serializationOptions.Episode, Encoding = serializationOptions.Encoding };
+        var instance = new T
+        {
+            Path = name,
+            Episode = serializationOptions.Episode,
+            Encoding = serializationOptions.Encoding
+        };
         using var binaryReader = new SBinaryReader(buffer, serializationOptions);
 
         if (instance is IEncryptable encryptableInstance)
@@ -209,19 +219,19 @@ public abstract class FileBase : IJsonWritable<FileBase>
         return ReadFromBuffer(file.Name, data.GetFileBuffer(file), type, serializationOptions);
     }
 
-    public IEnumerable<byte> GetBytes()
+    public IReadOnlyCollection<byte> GetBytes()
     {
         var serializationOptions = BinarySerializationOptions.Default;
         return GetBytes(serializationOptions);
     }
 
-    public IEnumerable<byte> GetBytes(Episode episode, Encoding? encoding = null)
+    public IReadOnlyCollection<byte> GetBytes(Episode episode, Encoding? encoding = null)
     {
         var serializationOptions = new BinarySerializationOptions(episode, encoding);
         return GetBytes(serializationOptions);
     }
 
-    public IEnumerable<byte> GetBytes(BinarySerializationOptions serializationOptions)
+    public IReadOnlyCollection<byte> GetBytes(BinarySerializationOptions serializationOptions)
     {
         using var memoryStream = new MemoryStream();
         using var binaryWriter = new SBinaryWriter(memoryStream, serializationOptions);
