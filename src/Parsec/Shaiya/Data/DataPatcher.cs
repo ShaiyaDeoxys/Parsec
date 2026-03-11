@@ -1,4 +1,5 @@
-﻿using Parsec.Helpers;
+﻿using System.Text;
+using Parsec.Helpers;
 
 namespace Parsec.Shaiya.Data;
 
@@ -21,8 +22,8 @@ public class DataPatcher : IDisposable
     /// <param name="filePatchedCallback">Action which gets invoked when a file gets patched</param>
     public void Patch(Data targetData, Data patchData, Action? filePatchedCallback = null)
     {
-        _targetBinaryWriter = new BinaryWriter(File.OpenWrite(targetData.Saf.Path));
-        _patchBinaryReader = new BinaryReader(File.OpenRead(patchData.Saf.Path));
+        _targetBinaryWriter = new BinaryWriter(targetData.Saf.FileStream, Encoding.Default, leaveOpen: true);
+        _patchBinaryReader = new BinaryReader(patchData.Saf.FileStream, Encoding.Default, leaveOpen: true);
 
         PatchFiles(targetData, patchData, filePatchedCallback);
 

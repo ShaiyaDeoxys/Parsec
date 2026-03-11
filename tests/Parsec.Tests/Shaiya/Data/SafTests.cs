@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Parsec.Shaiya.Data;
 
 namespace Parsec.Tests.Shaiya.Data;
 
@@ -10,12 +11,12 @@ public class SafTests
     [InlineData(1000, 3000)]
     public void SafClearingTest(long offset, int length)
     {
-        var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/clearme.sah", "Shaiya/Data/clearme.saf");
+        using var saf = new Saf("Shaiya/Data/clearme.saf");
 
         var nullData = new byte[length];
-        data.Saf.ClearBytes(offset, length);
+        saf.ClearBytes(offset, length);
 
-        var newData = data.Saf.ReadBytes(offset, length);
+        var newData = saf.ReadBytes(offset, length);
         Assert.True(newData.SequenceEqual(nullData));
     }
 }

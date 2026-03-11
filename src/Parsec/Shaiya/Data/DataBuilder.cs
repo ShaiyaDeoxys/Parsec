@@ -5,14 +5,9 @@ namespace Parsec.Shaiya.Data;
 public static class DataBuilder
 {
     /// <summary>
-    /// The path to the data directory (both data.sah and data.saf)
-    /// </summary>
-    private static string _path;
-
-    /// <summary>
     /// The binary write instance for the saf file
     /// </summary>
-    private static BinaryWriter _safWriter;
+    private static BinaryWriter? _safWriter;
 
     /// <summary>
     /// The total file count
@@ -28,8 +23,6 @@ public static class DataBuilder
     {
         try
         {
-            _path = inputFolderPath;
-
             if (!FileHelper.DirectoryExists(inputFolderPath))
                 throw new DirectoryNotFoundException();
 
@@ -48,6 +41,8 @@ public static class DataBuilder
             var sah = new Sah(inputFolderPath, rootFolder, _fileCount);
             sah.Write(sahPath);
 
+            _safWriter.Dispose();
+
             var saf = new Saf(safPath);
             var data = new Data(sah, saf);
 
@@ -57,7 +52,6 @@ public static class DataBuilder
         {
             _safWriter?.Dispose();
             _safWriter = null;
-            _path = "";
             _fileCount = 0;
         }
     }
@@ -97,7 +91,7 @@ public static class DataBuilder
 
             var shaiyaFile = new SFile(directory) { Name = file, Length = (int)fileStream.Length };
 
-            WriteFile(shaiyaFile);
+            WriteFile(filePath, shaiyaFile);
             directory.AddFile(shaiyaFile);
 
             _fileCount++;
@@ -107,12 +101,18 @@ public static class DataBuilder
     /// <summary>
     /// Appends a file at the end of the saf file
     /// </summary>
+    /// <param name="filePath">Path to file</param>
     /// <param name="file"><see cref="SFile"/> instance to add</param>
-    private static void WriteFile(SFile file)
+    private static void WriteFile(string filePath, SFile file)
     {
+        if (_safWriter == null)
+        {
+            throw new InvalidOperationException("Cannot write file because writer hasn't been initialized");
+        }
+
         file.Offset = _safWriter.BaseStream.Position;
 
-        var fileBytes = File.ReadAllBytes(Path.Combine(_path, file.RelativePath));
+        var fileBytes = File.ReadAllBytes(filePath);
         _safWriter.Write(fileBytes);
     }
 }

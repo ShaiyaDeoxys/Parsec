@@ -2,7 +2,7 @@
 
 namespace Parsec.Shaiya.Data;
 
-public class Data
+public class Data : IDisposable
 {
     public Data(Sah sah, Saf saf)
     {
@@ -29,12 +29,12 @@ public class Data
     /// <summary>
     /// <see cref="Sah"/> instance for the current data
     /// </summary>
-    public Sah Sah { get; set; }
+    public Sah Sah { get; }
 
     /// <summary>
     /// <see cref="Saf"/> instance for the current data
     /// </summary>
-    public Saf Saf { get; set; }
+    public Saf Saf { get; }
 
     /// <summary>
     /// The data's root folder from the sah index
@@ -161,5 +161,10 @@ public class Data
             var normalizedPath = PathHelper.Normalize(filePath);
             RemoveFile(normalizedPath);
         }
+    }
+
+    public void Dispose()
+    {
+        Saf.Dispose();
     }
 }

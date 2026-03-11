@@ -7,25 +7,28 @@ using Xunit.Sdk;
 
 namespace Parsec.Tests.Shaiya.Data;
 
+[Collection("DataTests")]
 public class DataTests
 {
     [Fact]
     [Description("Tests building both data.sah and data.saf from a directory")]
     public void DataBuildingTest()
     {
-        DataBuilder.CreateFromDirectory("Shaiya/Data/sample_data", "Shaiya/Data/output_data");
+        using var data = DataBuilder.CreateFromDirectory("Shaiya/Data/sample_data", "Shaiya/Data/output_data");
         Assert.True(File.Exists("Shaiya/Data/output_data/output_data.sah"));
         Assert.True(File.Exists("Shaiya/Data/output_data/output_data.saf"));
 
-        Assert.Throws<DirectoryNotFoundException>(
-            () => DataBuilder.CreateFromDirectory("Shaiya/wrong_folder_path/does_not_exist", "Shaiya/Data/output_data/"));
+        Assert.Throws<DirectoryNotFoundException>(() =>
+        {
+            using var _ =  DataBuilder.CreateFromDirectory("Shaiya/wrong_folder_path/does_not_exist", "Shaiya/Data/output_data/");
+        });
     }
 
     [Fact]
     [Description("Tests extracting a data file fully")]
     public void DataExtractionTest()
     {
-        var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/sample.sah", "Shaiya/Data/sample.saf");
+        using var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/sample.sah", "Shaiya/Data/sample.saf");
         data.ExtractAll("Shaiya/Data/extracted");
 
         foreach (var file in data.FileIndex.Values)
@@ -36,7 +39,7 @@ public class DataTests
     [Description("Tests extracting a single folder from a data file")]
     public void DataFolderExtractionTest()
     {
-        var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/sample.sah", "Shaiya/Data/sample.saf");
+        using var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/sample.sah", "Shaiya/Data/sample.saf");
         const string extractionDirectory = "Shaiya/Data/single_folder_extraction";
 
         var folder1 = data.RootDirectory.Directories.FirstOrDefault();
@@ -63,7 +66,7 @@ public class DataTests
     [Description("Tests extracting a single file from a data file")]
     public void DataFileExtractionTest()
     {
-        var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/sample.sah", "Shaiya/Data/sample.saf");
+        using var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/sample.sah", "Shaiya/Data/sample.saf");
         const string extractionDirectory = "Shaiya/Data/single_file_extraction";
 
         var file1 = data.FileIndex.Values.FirstOrDefault();
@@ -84,12 +87,12 @@ public class DataTests
     public void DataPatchingTest()
     {
         // Load data
-        var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/target.sah", "Shaiya/Data/sample.saf");
+        using var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/target.sah", "Shaiya/Data/sample.saf");
         var initialFiles = data.FileIndex.Keys.ToList();
 
         // Load patches
-        var patch = new Parsec.Shaiya.Data.Data("Shaiya/Data/patch.sah", "Shaiya/Data/patch.saf");
-        var patch2 = new Parsec.Shaiya.Data.Data("Shaiya/Data/patch2.sah", "Shaiya/Data/patch2.saf");
+        using var patch = new Parsec.Shaiya.Data.Data("Shaiya/Data/patch.sah", "Shaiya/Data/patch.saf");
+        using var patch2 = new Parsec.Shaiya.Data.Data("Shaiya/Data/patch2.sah", "Shaiya/Data/patch2.saf");
 
         var patchFiles = patch.FileIndex.Keys.Concat(patch2.FileIndex.Keys).ToList();
 
@@ -120,7 +123,7 @@ public class DataTests
     [Description("Tests deleting files from a delete.lst list")]
     public void DataDeleteListTest()
     {
-        var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/delete.sah", "Shaiya/Data/sample.saf");
+        using var data = new Parsec.Shaiya.Data.Data("Shaiya/Data/delete.sah", "Shaiya/Data/sample.saf");
 
         var lstPath = "Shaiya/Data/delete.lst";
         data.RemoveFilesFromLst(lstPath);
