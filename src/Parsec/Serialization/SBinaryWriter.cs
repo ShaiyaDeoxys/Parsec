@@ -6,11 +6,13 @@ namespace Parsec.Serialization;
 public sealed class SBinaryWriter : IDisposable
 {
     private readonly BinaryWriter _binaryWriter;
-    public readonly BinarySerializationOptions SerializationOptions;
+    private readonly Stream? _innerStream;
+    public BinarySerializationOptions SerializationOptions { get; }
 
     public SBinaryWriter(Stream stream, BinarySerializationOptions serializationOptions)
     {
         _binaryWriter = new BinaryWriter(stream);
+        _innerStream = stream;
         SerializationOptions = serializationOptions;
     }
 
@@ -25,6 +27,7 @@ public sealed class SBinaryWriter : IDisposable
     public SBinaryWriter(string filePath, BinarySerializationOptions serializationOptions)
     {
         var fileStream = File.Create(filePath);
+        _innerStream = fileStream;
         _binaryWriter = new BinaryWriter(fileStream);
         SerializationOptions = serializationOptions;
     }
@@ -127,5 +130,6 @@ public sealed class SBinaryWriter : IDisposable
     public void Dispose()
     {
         _binaryWriter.Dispose();
+        _innerStream?.Dispose();
     }
 }
