@@ -94,7 +94,7 @@ public static class ParsecReader
             throw new ArgumentException("Type must be a child of FileBase");
 
         if (!File.Exists(path))
-            throw new FileNotFoundException($"File ${path} not found");
+            throw new FileNotFoundException($"File {path} not found");
 
         if (Path.GetExtension(path) != ".json")
             throw new FileLoadException("The provided file to deserialize must be a valid json file");
