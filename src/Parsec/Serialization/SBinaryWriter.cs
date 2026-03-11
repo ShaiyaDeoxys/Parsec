@@ -24,7 +24,7 @@ public class SBinaryWriter : IDisposable
 
     public SBinaryWriter(string filePath, BinarySerializationOptions serializationOptions)
     {
-        var fileStream = File.OpenWrite(filePath);
+        var fileStream = File.Create(filePath);
         _binaryWriter = new BinaryWriter(fileStream);
         SerializationOptions = serializationOptions;
     }
