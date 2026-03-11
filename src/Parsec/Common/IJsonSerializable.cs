@@ -3,12 +3,11 @@
 /// <summary>
 /// Interface that defines the behavior of files that can be exported as json
 /// </summary>
-public interface IJsonSerializable<T>
+public interface IJsonSerializable
 {
     /// <summary>
     /// Serializes an object into json
     /// </summary>
-    /// <param name="obj">Object to serialize</param>
     /// <returns>The serialized object as a json string</returns>
-    string JsonSerialize(T obj);
+    string JsonSerialize();
 }

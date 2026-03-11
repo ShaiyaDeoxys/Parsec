@@ -1,6 +1,6 @@
 ﻿namespace Parsec.Common;
 
-public interface IJsonWritable<T> : IJsonSerializable<T>
+public interface IJsonWritable : IJsonSerializable
 {
     /// <summary>
     /// Writes the file as JSON with the possibility of ignoring some properties

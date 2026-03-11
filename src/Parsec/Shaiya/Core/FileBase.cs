@@ -10,7 +10,7 @@ using Parsec.Shaiya.Data;
 
 namespace Parsec.Shaiya.Core;
 
-public abstract class FileBase : IJsonWritable<FileBase>
+public abstract class FileBase : IJsonWritable
 {
     /// <summary>
     /// Full path to the file
@@ -41,7 +41,7 @@ public abstract class FileBase : IJsonWritable<FileBase>
     /// <inheritdoc/>
     public void WriteJson(string path)
     {
-        FileHelper.WriteFile(path, JsonSerialize(this), Encoding);
+        FileHelper.WriteFile(path, JsonSerialize(), Encoding);
     }
 
     private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
@@ -57,7 +57,7 @@ public abstract class FileBase : IJsonWritable<FileBase>
     };
 
     /// <inheritdoc/>
-    public virtual string JsonSerialize(FileBase obj) => JsonConvert.SerializeObject(obj, JsonSerializerSettings);
+    public virtual string JsonSerialize() => JsonConvert.SerializeObject(this, JsonSerializerSettings);
 
     protected abstract void Read(SBinaryReader binaryReader);
 
