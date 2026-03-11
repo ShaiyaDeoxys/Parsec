@@ -126,7 +126,7 @@ public sealed class SDirectory
     {
         if (HasFile(file.Name))
         {
-            return;
+            throw new Exception($"File {file.Name} already exists in directory {Name}");
         }
 
         Files.Add(file);
@@ -140,7 +140,9 @@ public sealed class SDirectory
     public void AddDirectory(SDirectory childDirectory)
     {
         if (HasSubfolder(childDirectory.Name))
+        {
             throw new Exception($"Subdirectory {childDirectory.Name} already exists in directory {Name}");
+        }
 
         Directories.Add(childDirectory);
     }
