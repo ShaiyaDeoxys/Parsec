@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using Parsec;
 using Parsec.Shaiya.Data;
 
@@ -118,13 +119,21 @@ internal static class Program
 
     private static string XorString(string input, byte key)
     {
-        var chars = input.ToCharArray();
-        for (var i = 0; i < chars.Length; i++)
+        var bytes = Encoding.ASCII.GetBytes(input);
+        for (var i = 0; i < bytes.Length; i++)
         {
-            chars[i] = (char)(chars[i] ^ key);
+            var xored = (byte)(bytes[i] ^ key);
+            // Skip bytes that would produce 0x00 -- null bytes corrupt the
+            // length-prefixed null-terminated string format used by SAH.
+            // Leaving the byte unchanged keeps the operation symmetric:
+            // if byte == key then both obfuscation and deobfuscation skip it.
+            if (xored != 0x00)
+            {
+                bytes[i] = xored;
+            }
         }
 
-        return new string(chars);
+        return Encoding.ASCII.GetString(bytes);
     }
 
     private static bool TryParseKey(string value, out byte key)
